@@ -1,0 +1,1 @@
+export const ADMIN_TOKEN = "VEND88SUPERADMIN2025"; 
