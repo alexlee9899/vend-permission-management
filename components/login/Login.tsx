@@ -7,19 +7,34 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { ADMIN_TOKEN } from "../../config/tokens";
+import Image from "next/image";
 
 interface LoginProps {
   onLoginSuccess?: () => void;
 }
 
-// 样式组件
+// 整个页面容器
+const PageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+`;
+
+// 登录表单容器
 const Container = styled.div`
   background-color: white;
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
+`;
+
+const ImageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.h1`
@@ -33,6 +48,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 400px;
 `;
 
 const FormGroup = styled.div`
@@ -142,7 +158,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setError("");
 
     if (!validateEmail(formData.email)) {
-      setError("Please enter a valid email address");
+      setError("Please enter a valid account");
       return;
     }
 
@@ -154,10 +170,21 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setIsLoading(true);
 
     try {
+      console.log(
+        "Sending login request to:",
+        getApiUrl(API_CONFIG.ENDPOINTS.LOGIN)
+      );
+      console.log("Request payload:", {
+        email: formData.email,
+        password: formData.password,
+      });
+
       const response = await axios.post(getApiUrl(API_CONFIG.ENDPOINTS.LOGIN), {
         email: formData.email,
         password: formData.password,
       });
+
+      console.log("Login response:", response.data);
 
       if (response.data.status_code === 200) {
         const token = response.data.token;
@@ -189,41 +216,52 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <Container>
-      <ToggleButton type="button" onClick={handleAdminLogin}>
-        {isAdmin ? "Switch to User Login" : "Switch to Admin Login"}
-      </ToggleButton>
-      <Title>Welcome To PMS</Title>
-      <Form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label htmlFor="email">{isAdmin ? "Admin Account" : "Email"}</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Please enter your email"
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Please enter your password"
-            required
-          />
-        </FormGroup>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        <SubmitButton type="submit" disabled={isLoading}>
-          {isLoading ? "Logging in..." : isAdmin ? "Admin Login" : "Login"}
-        </SubmitButton>
-      </Form>
-    </Container>
+    <PageContainer>
+      <ImageContainer>
+        <Image
+          src="/images/login.png"
+          alt="Permission Management"
+          width={350}
+          height={350}
+          priority
+        />
+      </ImageContainer>
+      <Container>
+        <ToggleButton type="button" onClick={handleAdminLogin}>
+          {isAdmin ? "Switch to User Login" : "Switch to Admin Login"}
+        </ToggleButton>
+        <Title>Welcome To PMS</Title>
+        <Form onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label htmlFor="email">{isAdmin ? "Admin Account" : "Email"}</Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Please enter your account"
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Please enter your password"
+              required
+            />
+          </FormGroup>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <SubmitButton type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : isAdmin ? "Admin Login" : "Login"}
+          </SubmitButton>
+        </Form>
+      </Container>
+    </PageContainer>
   );
 }

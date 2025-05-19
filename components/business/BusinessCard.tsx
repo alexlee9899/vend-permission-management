@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 interface Permission {
   _id: string;
@@ -23,6 +24,7 @@ const Card = styled.div`
   margin: 1rem;
   width: 300px;
   transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 
   &:hover {
     transform: translateY(-2px);
@@ -85,8 +87,14 @@ export default function BusinessCard({
   ownerId,
   permissions = [],
 }: BusinessCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/admin/${id}`);
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <BusinessName>{name}</BusinessName>
       <InfoRow>
         <Label>ID:</Label>

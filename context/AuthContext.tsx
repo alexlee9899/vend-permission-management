@@ -11,13 +11,13 @@ import {
 import axios from "axios";
 import { getApiUrl, API_CONFIG } from "../config/api";
 
-interface Business {
+export interface Business {
   _id: string;
   owner_id: string;
   name: string;
 }
 
-interface Permission {
+export interface Permission {
   _id: string;
   business_id: string;
   expire: string;
@@ -25,7 +25,7 @@ interface Permission {
   name: string;
 }
 
-interface DetailedBusiness {
+export interface DetailedBusiness {
   _id: string;
   business_id: string;
   name: string;
@@ -40,8 +40,9 @@ interface AuthContextType {
   businesses: Business[];
   allBusinesses: DetailedBusiness[];
   isLoading: boolean;
-  setToken: (token: string) => void;
-  setUserEmail: (email: string) => void;
+  setToken: (token: string | null) => void;
+  setUserEmail: (email: string | null) => void;
+  setAdminToken: (token: string | null) => void;
   fetchBusinesses: () => Promise<void>;
   fetchAllBusinesses: () => Promise<void>;
 }
@@ -97,6 +98,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getApiUrl("/shop/get_business_permission"),
       {
         business_id: businessId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
       }
     );
     return response.data;
@@ -107,9 +114,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       setIsFetchingAll(true);
-      const response = await axios.post(getApiUrl("/search/business_search"), {
-        detail: true,
-      });
+      const response = await axios.post(
+        getApiUrl(API_CONFIG.ENDPOINTS.SEARCH_BUSINESS),
+        {
+          detail: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.status_code === 200) {
         // 获取所有业务
@@ -150,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         setToken,
         setUserEmail,
+        setAdminToken,
         fetchBusinesses,
         fetchAllBusinesses,
       }}
