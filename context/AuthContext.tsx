@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // 从 localStorage 初始化状态
-    const storedAdminToken = localStorage.getItem("adminToken");
+    const storedAdminToken = localStorage.getItem("token");
     const storedToken = localStorage.getItem("token");
     const storedEmail = localStorage.getItem("userEmail");
 
