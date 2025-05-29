@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { ADMIN_TOKEN } from "../../config/tokens";
 import Image from "next/image";
+import { colors } from "@/styles/theme";
 
 interface LoginProps {
   onLoginSuccess?: () => void;
@@ -84,7 +85,7 @@ const ErrorMessage = styled.div`
 
 const SubmitButton = styled.button`
   padding: 0.75rem;
-  background-color: #0070f3;
+  background-color: ${colors.button.primary};
   color: white;
   border: none;
   border-radius: 6px;
@@ -96,11 +97,11 @@ const SubmitButton = styled.button`
   transition: background-color 0.2s;
 
   &:hover:not(:disabled) {
-    background-color: #0051b3;
+    background-color: #333333;
   }
 
   &:disabled {
-    background-color: #93c5fd;
+    background-color: ${colors.button.disabled};
     cursor: not-allowed;
   }
 `;
@@ -110,16 +111,16 @@ const ToggleButton = styled.button`
   top: 1rem;
   right: 1rem;
   padding: 0.5rem 1rem;
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background-color: ${colors.button.secondary};
+  color: white;
+  border: none;
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background-color: #e5e7eb;
+    background-color: #555555;
   }
 `;
 
@@ -199,7 +200,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           router.push("/admin");
           localStorage.setItem("adminToken", ADMIN_TOKEN);
         } else {
-          router.push("/user");
+          router.push("/agent");
         }
       } else {
         setError("Login failed: Invalid credentials");

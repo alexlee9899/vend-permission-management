@@ -39,12 +39,14 @@ interface AuthContextType {
   adminToken: string | null;
   businesses: Business[];
   allBusinesses: DetailedBusiness[];
+  allAgentBusinesses: DetailedBusiness[];
   isLoading: boolean;
   setToken: (token: string | null) => void;
   setUserEmail: (email: string | null) => void;
   setAdminToken: (token: string | null) => void;
   fetchBusinesses: () => Promise<void>;
   fetchAllBusinesses: () => Promise<void>;
+  fetchAllAgentBusinesses: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,6 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [adminToken, setAdminToken] = useState<string | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [allBusinesses, setAllBusinesses] = useState<DetailedBusiness[]>([]);
+  const [allAgentBusinesses, setAllAgentBusinesses] = useState<
+    DetailedBusiness[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [isFetchingAll, setIsFetchingAll] = useState(false);
@@ -102,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -144,8 +149,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 permissions: permissionResponse.permissions,
               };
             }
+            return null;
           })
-        );
+        ).then((results) => results.filter(Boolean) as DetailedBusiness[]);
+
         setAllBusinesses(businessesWithPermissions);
       }
     } catch (error) {
@@ -153,8 +160,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsFetchingAll(false);
     }
-  }, [adminToken, isFetchingAll]);
+  }, [adminToken, token]);
 
+  const fetchAllAgentBusinesses = useCallback(async () => {
+    if (!token || isFetchingAll) return;
+    const agentBusinessIds = [];
+
+    try {
+      setIsFetchingAll(true);
+      const response = await axios.post(
+        getApiUrl(API_CONFIG.ENDPOINTS.AGENT_BUSINESS_LIST),
+        {
+          token: token,
+        }
+      );
+      if (response.data.status_code != 200) return;
+      const businesses = response.data.agent_business;
+      for (const business of businesses) {
+        agentBusinessIds.push(business.business_id);
+      }
+      const agentBusinesses = (
+        await Promise.all(
+          agentBusinessIds.map(async (business_id: string) => {
+            const permissionResponse = await getPermissionInfo(business_id);
+            if (permissionResponse.status_code === 200) {
+              return {
+                _id: business_id,
+                name: permissionResponse.permissions[0].business_name,
+                owner_id: permissionResponse.permissions[0].owner_id,
+                business_id: business_id,
+                permissions: permissionResponse.permissions,
+              } as DetailedBusiness;
+            }
+            return undefined;
+          })
+        )
+      ).filter(
+        (business): business is DetailedBusiness => business !== undefined
+      );
+      setAllAgentBusinesses(agentBusinesses);
+    } catch (error) {
+      console.error("failed to fetch all agent businesses:", error);
+    } finally {
+      setIsFetchingAll(false);
+    }
+  }, [token]);
   return (
     <AuthContext.Provider
       value={{
@@ -163,12 +213,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userEmail,
         businesses,
         allBusinesses,
+        allAgentBusinesses,
         isLoading,
         setToken,
         setUserEmail,
         setAdminToken,
         fetchBusinesses,
         fetchAllBusinesses,
+        fetchAllAgentBusinesses,
       }}
     >
       {children}

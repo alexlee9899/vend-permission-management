@@ -22,7 +22,10 @@ export default function StyledComponentsRegistry({
   if (typeof window !== "undefined") return <>{children}</>;
 
   return (
-    <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
+    <StyleSheetManager
+      sheet={styledComponentsStyleSheet.instance}
+      enableVendorPrefixes
+    >
       {children}
     </StyleSheetManager>
   );

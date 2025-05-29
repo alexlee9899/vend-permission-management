@@ -6,5 +6,5 @@ export default function BusinessDetailPage() {
   const params = useParams();
   const businessId = params.id as string;
 
-  return <BusinessDetail businessId={businessId} isAdmin={true} />;
+  return <BusinessDetail businessId={businessId} isAdmin={false} />;
 }

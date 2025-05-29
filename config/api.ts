@@ -8,6 +8,7 @@ export const API_CONFIG = {
     UPDATE_PERMISSION: "/shop/update_business_permission",
     DELETE_PERMISSION: "/shop/delete_business_permission",
     ADD_PERMISSION: "/shop/add_business_permission",
+    AGENT_BUSINESS_LIST: "/shop/get_agent_admin",
     // 可以在这里添加其他端点
   }
 } as const;

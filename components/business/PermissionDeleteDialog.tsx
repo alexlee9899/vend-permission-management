@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { getApiUrl, API_CONFIG } from "@/config/api";
+import { colors } from "@/styles/theme";
 
 interface PermissionDeleteDialogProps {
   permissionId: string;
@@ -54,12 +55,12 @@ const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   font-size: 1rem;
   cursor: pointer;
   background: ${(props) =>
-    props.variant === "primary" ? "#dc2626" : "#f3f4f6"};
-  color: ${(props) => (props.variant === "primary" ? "white" : "#333")};
+    props.variant === "primary" ? colors.danger.main : colors.button.secondary};
+  color: white;
 
   &:hover {
     background: ${(props) =>
-      props.variant === "primary" ? "#b91c1c" : "#e5e7eb"};
+      props.variant === "primary" ? colors.danger.dark : "#555555"};
   }
 `;
 

@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation";
 import BusinessList from "@/components/business/BusinessList";
 import { useAuth } from "@/context/AuthContext";
 
-export default function AdminPage() {
+export default function AgentPage() {
   const router = useRouter();
-  const { token, adminToken, allBusinesses, fetchAllBusinesses } = useAuth();
+  const { token, adminToken, allAgentBusinesses, fetchAllAgentBusinesses } =
+    useAuth();
 
   const handleBusinessClick = (businessId: string) => {
     router.push(`/admin/${businessId}`);
@@ -16,8 +17,8 @@ export default function AdminPage() {
       onBusinessClick={handleBusinessClick}
       token={token ?? ""}
       adminToken={adminToken ?? ""}
-      allBusinesses={allBusinesses}
-      fetchAllBusinesses={fetchAllBusinesses}
+      allBusinesses={allAgentBusinesses}
+      fetchAllBusinesses={fetchAllAgentBusinesses}
     />
   );
 }

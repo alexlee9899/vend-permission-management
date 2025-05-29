@@ -32,7 +32,7 @@ const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   font-size: 0.875rem;
   cursor: pointer;
   background: ${(props) =>
-    props.variant === "primary" ? "#0070f3" : "#f3f4f6"};
+    props.variant === "primary" ? "#1a1a1b" : "#f3f4f6"};
   color: ${(props) => (props.variant === "primary" ? "white" : "#333")};
 
   &:hover {

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
+import { colors, radius, shadows } from "@/styles/theme";
 
 interface Permission {
   _id: string;
@@ -14,12 +15,13 @@ interface BusinessCardProps {
   name: string;
   ownerId: string;
   permissions?: Permission[];
+  onClick?: () => void;
 }
 
 const Card = styled.div`
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: ${colors.background.main};
+  border-radius: ${radius.lg};
+  box-shadow: ${shadows.md};
   padding: 1.5rem;
   margin: 1rem;
   width: 300px;
@@ -28,12 +30,12 @@ const Card = styled.div`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: ${shadows.lg};
   }
 `;
 
 const BusinessName = styled.h3`
-  color: #333;
+  color: ${colors.text.primary};
   font-size: 1.25rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -46,38 +48,38 @@ const InfoRow = styled.div`
 `;
 
 const Label = styled.span`
-  color: #666;
+  color: ${colors.text.secondary};
   width: 80px;
   flex-shrink: 0;
 `;
 
 const Value = styled.span`
-  color: #333;
+  color: ${colors.text.primary};
   flex-grow: 1;
 `;
 
 const PermissionsSection = styled.div`
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${colors.border.light};
 `;
 
 const PermissionItem = styled.div`
-  background: #f5f5f5;
+  background: ${colors.background.light};
   padding: 0.5rem;
-  border-radius: 4px;
+  border-radius: ${radius.sm};
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 `;
 
 const PermissionName = styled.div`
   font-weight: 500;
-  color: #333;
+  color: ${colors.text.primary};
   margin-bottom: 0.25rem;
 `;
 
 const PermissionDetails = styled.div`
-  color: #666;
+  color: ${colors.text.secondary};
   font-size: 0.8rem;
 `;
 
@@ -86,11 +88,16 @@ export default function BusinessCard({
   name,
   ownerId,
   permissions = [],
+  onClick,
 }: BusinessCardProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/admin/${id}`);
+    if (onClick) {
+      onClick();
+    } else {
+      router.push(`/admin/${id}`);
+    }
   };
 
   return (

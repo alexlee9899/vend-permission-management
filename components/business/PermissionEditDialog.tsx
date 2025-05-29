@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { getApiUrl, API_CONFIG } from "@/config/api";
+import { colors } from "@/styles/theme";
 
 interface PermissionEditDialogProps {
   permission: {
@@ -84,12 +85,14 @@ const Button = styled.button<{ variant?: "primary" | "secondary" }>`
   font-size: 1rem;
   cursor: pointer;
   background: ${(props) =>
-    props.variant === "primary" ? "#0070f3" : "#f3f4f6"};
-  color: ${(props) => (props.variant === "primary" ? "white" : "#333")};
+    props.variant === "primary"
+      ? colors.button.primary
+      : colors.button.secondary};
+  color: white;
 
   &:hover {
     background: ${(props) =>
-      props.variant === "primary" ? "#0051b3" : "#e5e7eb"};
+      props.variant === "primary" ? "#333333" : "#555555"};
   }
 `;
 
