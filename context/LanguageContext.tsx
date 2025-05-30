@@ -7,7 +7,7 @@ interface LanguageContextProps {
 }
 
 const LanguageContext = createContext<LanguageContextProps>({
-  lang: "zh",
+  lang: "en",
   setLang: () => {},
 });
 
@@ -16,7 +16,7 @@ export const useLanguage = () => useContext(LanguageContext);
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [lang, setLangState] = useState<Lang>("zh");
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     const stored = localStorage.getItem("lang");
