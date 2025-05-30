@@ -11,45 +11,90 @@ import { getApiUrl } from "@/config/api";
 import { colors, radius, shadows } from "@/styles/theme";
 
 const Container = styled.div`
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  color: ${colors.text.primary};
-  margin-bottom: 2rem;
+  min-height: 100vh;
+  width: 100vw;
+  padding: 2.5rem 0;
+  background: ${colors.background.gradient};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Card = styled.div`
-  background: ${colors.background.main};
-  border-radius: ${radius.lg};
-  box-shadow: ${shadows.md};
-  padding: 2rem;
+  background: ${colors.background.glass};
+  border-radius: ${radius.xl};
+  box-shadow: ${shadows.xl};
+  padding: 3rem 2.5rem 2.5rem 2.5rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1.5px solid ${colors.border.gradient};
+`;
+
+const Title = styled.h1`
+  color: ${colors.primary.main};
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-align: center;
+  background: ${colors.primary.gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const Section = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  background: ${colors.background.light};
+  border-radius: ${radius.lg};
+  box-shadow: ${shadows.md};
+  padding: 2rem 1.5rem;
+  animation: fadeIn 0.5s ease-out;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const SectionTitle = styled.h2`
-  color: ${colors.text.primary};
+  color: ${colors.primary.main};
   font-size: 1.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid ${colors.border.light};
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid ${colors.border.gradient};
+  background: ${colors.primary.gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const InfoRow = styled.div`
   display: flex;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+  padding: 0.8rem;
+  background: ${colors.background.light};
+  border-radius: ${radius.md};
+  transition: all 0.3s ease;
+  box-shadow: ${shadows.sm};
+  &:hover {
+    background: ${colors.background.main};
+    transform: translateX(5px);
+  }
 `;
 
 const Label = styled.span`
   color: ${colors.text.secondary};
-  width: 120px;
+  width: 150px;
   flex-shrink: 0;
+  font-weight: 600;
 `;
 
 const Value = styled.span`
@@ -59,40 +104,148 @@ const Value = styled.span`
 
 const PermissionList = styled.div`
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
+  margin-top: 2rem;
 `;
 
 const PermissionCard = styled.div`
-  background: ${colors.background.light};
-  padding: 1rem;
-  border-radius: ${radius.md};
+  background: ${colors.background.glass};
+  padding: 1.5rem;
+  border-radius: ${radius.lg};
+  box-shadow: ${shadows.md};
+  transition: all 0.3s ease;
+  border: 1.5px solid ${colors.border.gradient};
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: ${shadows.lg};
+    border-color: ${colors.primary.light};
+  }
 `;
 
 const PermissionName = styled.div`
-  font-weight: 600;
-  color: ${colors.text.primary};
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: ${colors.primary.main};
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  background: ${colors.primary.gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const PermissionDetails = styled.div`
   color: ${colors.text.secondary};
-  font-size: 0.9rem;
+  font-size: 1rem;
+  line-height: 1.6;
 `;
 
 const ActionButton = styled.button<{ variant?: "edit" | "delete" }>`
-  padding: 0.5rem 1rem;
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: ${radius.sm};
-  font-size: 0.875rem;
+  border-radius: ${radius.lg};
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
   background: ${(props) =>
-    props.variant === "edit" ? colors.primary.main : colors.danger.main};
+    props.variant === "edit" ? colors.primary.gradient : colors.danger.main};
   color: white;
-  margin-left: 0.5rem;
-
+  margin-left: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+  box-shadow: ${shadows.sm};
   &:hover {
     background: ${(props) =>
-      props.variant === "edit" ? colors.primary.dark : colors.danger.dark};
+      props.variant === "edit" ? colors.primary.light : colors.danger.dark};
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: ${shadows.md};
+  }
+`;
+
+const AddButton = styled.button`
+  padding: 1rem 2rem;
+  background: ${colors.secondary.gradient};
+  color: white;
+  border: none;
+  border-radius: ${radius.xl};
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+  box-shadow: ${shadows.md};
+  &:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: ${shadows.lg};
+    background: ${colors.secondary.light};
+  }
+`;
+
+const AgentForm = styled.form`
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  background: ${colors.background.glass};
+  padding: 1.5rem;
+  border-radius: ${radius.lg};
+  box-shadow: ${shadows.sm};
+  border: 1.5px solid ${colors.border.gradient};
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+`;
+
+const AgentInput = styled.input`
+  padding: 1rem 1.2rem;
+  border: 1.5px solid ${colors.border.main};
+  border-radius: ${radius.lg};
+  font-size: 1.1rem;
+  background: ${colors.background.light};
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  font-weight: 500;
+  &:focus {
+    outline: none;
+    border-color: ${colors.primary.light};
+    box-shadow: 0 0 0 4px ${colors.primary.light}40;
+    background: #fff;
+  }
+`;
+
+const AgentButton = styled.button`
+  padding: 1rem 2rem;
+  background: ${colors.primary.gradient};
+  color: white;
+  border: none;
+  border-radius: ${radius.lg};
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+  box-shadow: ${shadows.sm};
+  &:hover {
+    background: ${colors.primary.light};
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: ${shadows.md};
+  }
+`;
+
+const Message = styled.div<{ type: "success" | "error" }>`
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: ${radius.lg};
+  background-color: ${(props) =>
+    props.type === "success" ? colors.success.light : colors.error.light};
+  color: ${(props) =>
+    props.type === "success" ? colors.success.main : colors.error.main};
+  font-weight: 700;
+  animation: slideIn 0.3s ease-out;
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
@@ -101,58 +254,6 @@ const PermissionHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
-`;
-
-const AddButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  background-color: ${colors.secondary.main};
-  color: white;
-  border: none;
-  border-radius: ${radius.md};
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: ${colors.secondary.dark};
-  }
-`;
-
-const AgentForm = styled.form`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const AgentInput = styled.input`
-  padding: 0.5rem;
-  border: 1px solid ${colors.border.main};
-  border-radius: ${radius.sm};
-  flex-grow: 1;
-`;
-
-const AgentButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: ${colors.primary.main};
-  color: white;
-  border: none;
-  border-radius: ${radius.sm};
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${colors.primary.dark};
-  }
-`;
-
-const Message = styled.div<{ type: "success" | "error" }>`
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border-radius: ${radius.sm};
-  background-color: ${(props) =>
-    props.type === "success" ? colors.success.light : colors.error.light};
-  color: ${(props) =>
-    props.type === "success" ? colors.success.main : colors.error.main};
 `;
 
 interface BusinessDetailProps {
