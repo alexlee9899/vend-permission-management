@@ -5,6 +5,8 @@ import styled from "styled-components";
 import BusinessCard from "@/components/business/BusinessCard";
 import { colors, radius, shadows } from "@/styles/theme";
 import { SearchIcon } from "@/components/icons";
+import { useLanguage } from "@/context/LanguageContext";
+import { dict } from "@/i18n/zh_en";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -162,6 +164,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
     DetailedBusiness[]
   >([]);
   const [isClient, setIsClient] = useState(false);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     setIsClient(true);
@@ -193,8 +196,8 @@ const BusinessList: React.FC<BusinessListProps> = ({
     return (
       <Container>
         <GlassGrid>
-          <Title>Permission Management</Title>
-          <LoadingMessage>Loading...</LoadingMessage>
+          <Title>{dict.business.management[lang]}</Title>
+          <LoadingMessage>{dict.system.loading[lang]}</LoadingMessage>
         </GlassGrid>
       </Container>
     );
@@ -203,7 +206,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
   return (
     <Container>
       <GlassGrid>
-        <Title>Permission Management</Title>
+        <Title>{dict.business.management[lang]}</Title>
         <SearchContainer>
           <SearchWrapper>
             <SearchIconWrapper>
@@ -211,7 +214,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
             </SearchIconWrapper>
             <SearchInput
               type="text"
-              placeholder="Search by business name..."
+              placeholder={dict.business.search[lang]}
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -231,7 +234,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
             ))}
           </BusinessGrid>
         ) : (
-          <NoResults>No businesses match your search criteria</NoResults>
+          <NoResults>{dict.business.noMatch[lang]}</NoResults>
         )}
       </GlassGrid>
     </Container>

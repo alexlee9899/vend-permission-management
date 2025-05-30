@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthProvider } from "@/context/AuthContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import StyledComponentsRegistry from "@/lib/registry";
 import MainLayout from "@/components/layout/MainLayout";
 
@@ -17,9 +18,11 @@ export default function RootLayout({
       </head>
       <body>
         <StyledComponentsRegistry>
-          <AuthProvider>
-            <MainLayout>{children}</MainLayout>
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <MainLayout>{children}</MainLayout>
+            </AuthProvider>
+          </LanguageProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { colors, radius, shadows } from "@/styles/theme";
 import { PermissionIcon, LevelIcon, ExpireIcon } from "@/components/icons";
+import { useLanguage } from "@/context/LanguageContext";
+import { dict } from "@/i18n/zh_en";
 
 interface Permission {
   _id: string;
@@ -185,6 +187,7 @@ export default function BusinessCard({
   onClick,
 }: BusinessCardProps) {
   const router = useRouter();
+  const { lang } = useLanguage();
 
   const handleClick = () => {
     if (onClick) {
@@ -199,11 +202,11 @@ export default function BusinessCard({
       <BusinessName>{name}</BusinessName>
       <InfoSection>
         <InfoRow>
-          <Label>Business ID</Label>
+          <Label>{dict.business.businessId[lang]}</Label>
           <Value>{id}</Value>
         </InfoRow>
         <InfoRow>
-          <Label>Owner ID</Label>
+          <Label>{dict.business.ownerId[lang]}</Label>
           <Value>{ownerId}</Value>
         </InfoRow>
       </InfoSection>
@@ -212,7 +215,7 @@ export default function BusinessCard({
           <IconWrapper>
             <PermissionIcon />
           </IconWrapper>
-          Permissions
+          {dict.business.permissions[lang]}
         </Label>
         {permissions.length > 0 ? (
           permissions.map((permission) => (
@@ -223,21 +226,21 @@ export default function BusinessCard({
                   <IconWrapper>
                     <LevelIcon />
                   </IconWrapper>
-                  <Label>Level:</Label>
+                  <Label>{dict.business.permissionLevel[lang]}:</Label>
                   <Value>{permission.level}</Value>
                 </DetailItem>
                 <DetailItem>
                   <IconWrapper>
                     <ExpireIcon />
                   </IconWrapper>
-                  <Label>Expire:</Label>
+                  <Label>{dict.business.expireTime[lang]}:</Label>
                   <Value>{permission.expire}</Value>
                 </DetailItem>
               </PermissionDetails>
             </PermissionItem>
           ))
         ) : (
-          <NoPermissions>No permissions found</NoPermissions>
+          <NoPermissions>{dict.business.noPermissions[lang]}</NoPermissions>
         )}
       </PermissionsSection>
     </Card>

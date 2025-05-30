@@ -9,6 +9,8 @@ import PermissionAddDialog from "@/components/business/PermissionAddDialog";
 import axios, { AxiosError } from "axios";
 import { getApiUrl } from "@/config/api";
 import { colors, radius, shadows } from "@/styles/theme";
+import { useLanguage } from "@/context/LanguageContext";
+import { dict } from "@/i18n/zh_en";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -266,6 +268,7 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
   isAdmin,
 }) => {
   const { allBusinesses, adminToken, fetchAllBusinesses } = useAuth();
+  const { lang } = useLanguage();
   const [business, setBusiness] = useState<DetailedBusiness | null>(null);
   const [editingPermission, setEditingPermission] = useState<Permission | null>(
     null
@@ -327,18 +330,18 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
       });
 
       if (response.data.status_code === 200) {
-        setMessage({ text: "Agent添加成功", type: "success" });
+        setMessage({ text: dict.detail.addSuccess[lang], type: "success" });
         setAgentEmail("");
       } else {
         setMessage({
-          text: response.data.message || "添加失败",
+          text: response.data.message || dict.detail.addFailed[lang],
           type: "error",
         });
       }
     } catch (error: unknown) {
       const axiosError = error as AxiosError<{ message: string }>;
       setMessage({
-        text: axiosError.response?.data?.message || "添加失败，请稍后重试",
+        text: axiosError.response?.data?.message || dict.detail.addFailed[lang],
         type: "error",
       });
     }
@@ -347,7 +350,7 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
   if (!business) {
     return (
       <Container>
-        <Title>Loading...</Title>
+        <Title>{dict.system.loading[lang]}</Title>
       </Container>
     );
   }
@@ -357,34 +360,36 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
       <Title>{business.name}</Title>
       <Card>
         <Section>
-          <SectionTitle>Basic Information</SectionTitle>
+          <SectionTitle>{dict.detail.basicInfo[lang]}</SectionTitle>
           <InfoRow>
-            <Label>Business ID:</Label>
+            <Label>{dict.business.businessId[lang]}:</Label>
             <Value>{business._id}</Value>
           </InfoRow>
           <InfoRow>
-            <Label>Owner ID:</Label>
+            <Label>{dict.business.ownerId[lang]}:</Label>
             <Value>{business.owner_id}</Value>
           </InfoRow>
         </Section>
         {isAdmin && (
           <Section>
-            <SectionTitle>Agent Management</SectionTitle>
+            <SectionTitle>{dict.detail.agentManagement[lang]}</SectionTitle>
             {message && <Message type={message.type}>{message.text}</Message>}
             <AgentForm onSubmit={handleAddAgent}>
               <AgentInput
                 type="email"
-                placeholder="Agent Email"
+                placeholder={dict.detail.agentEmail[lang]}
                 value={agentEmail}
                 onChange={(e) => setAgentEmail(e.target.value)}
                 required
               />
-              <AgentButton type="submit">Add Agent</AgentButton>
+              <AgentButton type="submit">
+                {dict.detail.addAgent[lang]}
+              </AgentButton>
             </AgentForm>
           </Section>
         )}
         <Section>
-          <SectionTitle>Permission Information</SectionTitle>
+          <SectionTitle>{dict.detail.permissionInfo[lang]}</SectionTitle>
           <PermissionList>
             {business.permissions && business.permissions.length > 0 ? (
               business.permissions.map((permission: Permission) => (
@@ -396,34 +401,36 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
                         variant="edit"
                         onClick={() => setEditingPermission(permission)}
                       >
-                        Edit
+                        {dict.nav.edit[lang]}
                       </ActionButton>
                       <ActionButton
                         variant="delete"
                         onClick={() => setDeletingPermissionId(permission._id)}
                       >
-                        Delete
+                        {dict.nav.delete[lang]}
                       </ActionButton>
                     </div>
                   </PermissionHeader>
                   <PermissionDetails>
                     <InfoRow>
-                      <Label>Permission Level:</Label>
+                      <Label>{dict.business.permissionLevel[lang]}:</Label>
                       <Value>{permission.level}</Value>
                     </InfoRow>
                     <InfoRow>
-                      <Label>Expiration Time:</Label>
+                      <Label>{dict.business.expireTime[lang]}:</Label>
                       <Value>{permission.expire}</Value>
                     </InfoRow>
                   </PermissionDetails>
                 </PermissionCard>
               ))
             ) : (
-              <PermissionDetails>No permission information</PermissionDetails>
+              <PermissionDetails>
+                {dict.business.noPermissions[lang]}
+              </PermissionDetails>
             )}
           </PermissionList>
           <AddButton onClick={() => setIsAddingPermission(true)}>
-            Add Permission
+            {dict.detail.addPermission[lang]}
           </AddButton>
         </Section>
       </Card>

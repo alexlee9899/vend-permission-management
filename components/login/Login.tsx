@@ -9,6 +9,8 @@ import { useAuth } from "../../context/AuthContext";
 import { ADMIN_TOKEN } from "../../config/tokens";
 import Image from "next/image";
 import { colors } from "@/styles/theme";
+import { useLanguage } from "@/context/LanguageContext";
+import { dict } from "@/i18n/zh_en";
 
 interface LoginProps {
   onLoginSuccess?: () => void;
@@ -127,6 +129,7 @@ const ToggleButton = styled.button`
 export default function Login({ onLoginSuccess }: LoginProps) {
   const router = useRouter();
   const { setToken, setUserEmail } = useAuth();
+  const { lang } = useLanguage();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -159,12 +162,12 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setError("");
 
     if (!validateEmail(formData.email)) {
-      setError("Please enter a valid account");
+      setError(dict.login.enterValidAccount[lang]);
       return;
     }
 
     if (!formData.password) {
-      setError("Please enter your password");
+      setError(dict.login.enterPassword[lang]);
       return;
     }
 
@@ -207,9 +210,9 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Login failed");
+        setError(err.response?.data?.message || dict.login.loginFailed[lang]);
       } else {
-        setError("Login failed, please try again later");
+        setError(dict.login.tryAgain[lang]);
       }
     } finally {
       setIsLoading(false);
@@ -221,7 +224,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       <ImageContainer>
         <Image
           src="/images/login.png"
-          alt="Permission Management"
+          alt={dict.system.title[lang]}
           width={350}
           height={350}
           priority
@@ -229,37 +232,43 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       </ImageContainer>
       <Container>
         <ToggleButton type="button" onClick={handleAdminLogin}>
-          {isAdmin ? "Switch to User Login" : "Switch to Admin Login"}
+          {isAdmin ? dict.login.switchUser[lang] : dict.login.switchAdmin[lang]}
         </ToggleButton>
-        <Title>Welcome To PMS</Title>
+        <Title>{dict.system.welcome[lang]} PMS</Title>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="email">{isAdmin ? "Admin Account" : "Email"}</Label>
+            <Label htmlFor="email">
+              {isAdmin ? dict.login.adminAccount[lang] : dict.login.email[lang]}
+            </Label>
             <Input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Please enter your account"
+              placeholder={dict.login.enterAccount[lang]}
               required
             />
           </FormGroup>
           <FormGroup>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{dict.login.password[lang]}</Label>
             <Input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Please enter your password"
+              placeholder={dict.login.enterPassword[lang]}
               required
             />
           </FormGroup>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <SubmitButton type="submit" disabled={isLoading}>
-            {isLoading ? "Logging in..." : isAdmin ? "Admin Login" : "Login"}
+            {isLoading
+              ? dict.nav.loggingIn[lang]
+              : isAdmin
+              ? dict.nav.adminLogin[lang]
+              : dict.nav.login[lang]}
           </SubmitButton>
         </Form>
       </Container>
