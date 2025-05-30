@@ -7,7 +7,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { ADMIN_TOKEN } from "../../config/tokens";
-import theme from "@/styles/theme";
+import Image from "next/image";
+import { colors } from "@/styles/theme";
 
 interface LoginProps {
   onLoginSuccess?: () => void;
@@ -15,50 +16,40 @@ interface LoginProps {
 
 // 整个页面容器
 const PageContainer = styled.div`
-  min-height: 100vh;
-  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${theme.colors.primary.gradient};
-  position: relative;
-  overflow: hidden;
+  gap: 2rem;
 `;
 
 // 登录表单容器
-const GlassCard = styled.div`
-  background: ${theme.colors.background.glass};
-  box-shadow: ${theme.shadows?.glass || "0 8px 32px rgba(30, 64, 175, 0.10)"};
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-radius: ${theme.radius?.xl || "32px"};
-  border: 1.5px solid ${theme.colors.border.gradient};
-  padding: 3rem 2.5rem 2.5rem 2.5rem;
-  max-width: 420px;
+const Container = styled.div`
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin: 2rem;
+  max-width: 400px;
+`;
+
+const ImageContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
 `;
 
 const Title = styled.h1`
   text-align: center;
-  margin-bottom: 2.5rem;
-  color: ${theme.colors.primary.main};
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  background: ${theme.colors.primary.gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 2rem;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
+  width: 400px;
 `;
 
 const FormGroup = styled.div`
@@ -73,12 +64,17 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-  padding: 1rem 1.2rem;
-  border: 1.5px solid ${theme.colors.border.main};
-  border-radius: ${theme.radius.lg};
-  font-size: 1.1rem;
-  background: ${theme.colors.background.light};
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #0070f3;
+    box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+  }
 `;
 
 const ErrorMessage = styled.div`
@@ -88,30 +84,43 @@ const ErrorMessage = styled.div`
 `;
 
 const SubmitButton = styled.button`
-  padding: 1rem 0;
-  background: ${theme.colors.button.primary};
-  color: ${theme.colors.text.inverse};
+  padding: 0.75rem;
+  background-color: black;
+  color: white;
   border: none;
-  border-radius: ${theme.radius.lg};
-  font-size: 1.1rem;
-  font-weight: 700;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  width: 100%;
+  width: 30%;
   margin: 0 auto;
-  box-shadow: ${theme.shadows.md};
-  transition: all 0.2s;
-  letter-spacing: 1px;
+  transition: background-color 0.2s;
 
   &:hover:not(:disabled) {
-    filter: brightness(1.1) saturate(1.2);
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: ${theme.shadows.lg};
+    background-color: #333333;
   }
 
   &:disabled {
-    background: ${theme.colors.button.disabled};
+    background-color: ${colors.button.disabled};
     cursor: not-allowed;
-    filter: grayscale(0.5);
+  }
+`;
+
+const ToggleButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: ${colors.button.secondary};
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #555555;
   }
 `;
 
@@ -208,60 +217,52 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <PageContainer style={{ fontFamily: theme.font.family }}>
-      <GlassCard
-        style={{
-          boxShadow: theme.shadows.glass,
-          borderRadius: theme.radius.xl,
-          border: `1.5px solid ${theme.colors.border.gradient}`,
-        }}
-      >
-        <Title style={{ fontFamily: theme.font.family }}>权限管理系统</Title>
+    <PageContainer>
+      <ImageContainer>
+        <Image
+          src="/images/login.png"
+          alt="Permission Management"
+          width={350}
+          height={350}
+          priority
+        />
+      </ImageContainer>
+      <Container>
+        <ToggleButton type="button" onClick={handleAdminLogin}>
+          {isAdmin ? "Switch to User Login" : "Switch to Admin Login"}
+        </ToggleButton>
+        <Title>Welcome To PMS</Title>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="email">账号</Label>
+            <Label htmlFor="email">{isAdmin ? "Admin Account" : "Email"}</Label>
             <Input
+              type="email"
               id="email"
               name="email"
-              type="email"
-              autoComplete="username"
               value={formData.email}
               onChange={handleChange}
-              placeholder="请输入邮箱"
+              placeholder="Please enter your account"
               required
-              style={{
-                borderRadius: theme.radius.lg,
-                fontFamily: theme.font.family,
-              }}
             />
           </FormGroup>
           <FormGroup>
-            <Label htmlFor="password">密码</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
+              type="password"
               id="password"
               name="password"
-              type="password"
-              autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="请输入密码"
+              placeholder="Please enter your password"
               required
-              style={{
-                borderRadius: theme.radius.lg,
-                fontFamily: theme.font.family,
-              }}
             />
           </FormGroup>
           {error && <ErrorMessage>{error}</ErrorMessage>}
-          <SubmitButton
-            type="submit"
-            disabled={isLoading}
-            style={{ borderRadius: theme.radius.lg }}
-          >
-            {isLoading ? "登录中..." : "登录"}
+          <SubmitButton type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : isAdmin ? "Admin Login" : "Login"}
           </SubmitButton>
         </Form>
-      </GlassCard>
+      </Container>
     </PageContainer>
   );
 }
