@@ -410,14 +410,15 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
         setAgents(response.data.agents || []);
       } else {
         setAgentMessage({
-          text: "无法获取代理列表",
+          text: dict.agent.cantGetAgents[lang],
           type: "error",
         });
       }
     } catch (error: unknown) {
       const axiosError = error as AxiosError<{ message: string }>;
       setAgentMessage({
-        text: axiosError.response?.data?.message || "获取代理列表时出错",
+        text:
+          axiosError.response?.data?.message || dict.agent.getAgentsError[lang],
         type: "error",
       });
     } finally {
@@ -438,21 +439,22 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
 
       if (response.data.status_code === 200) {
         setAgentMessage({
-          text: "代理删除成功",
+          text: dict.agent.deleteSuccess[lang],
           type: "success",
         });
         // 重新获取代理列表
         fetchBusinessAgents();
       } else {
         setAgentMessage({
-          text: response.data.message || "删除代理失败",
+          text: response.data.message || dict.agent.deleteFailed[lang],
           type: "error",
         });
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       setAgentMessage({
-        text: axiosError.response?.data?.message || "删除代理失败",
+        text:
+          axiosError.response?.data?.message || dict.agent.deleteFailed[lang],
         type: "error",
       });
     }
@@ -593,13 +595,17 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
               </AgentButton>
             </AgentForm>
 
-            <SectionTitle style={{ marginTop: "2rem" }}>代理列表</SectionTitle>
+            <SectionTitle style={{ marginTop: "2rem" }}>
+              {dict.agent.agentList[lang]}
+            </SectionTitle>
             {agentMessage && (
               <Message type={agentMessage.type}>{agentMessage.text}</Message>
             )}
 
             {isLoadingAgents ? (
-              <div className="text-center p-4">加载代理列表中...</div>
+              <div className="text-center p-4">
+                {dict.agent.loadingAgents[lang]}
+              </div>
             ) : (
               <AgentList>
                 {agents.length > 0 ? (
@@ -615,12 +621,12 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
                       <DeleteButton
                         onClick={() => handleDeleteAgent(agent._id)}
                       >
-                        删除
+                        {dict.nav.delete[lang]}
                       </DeleteButton>
                     </AgentCard>
                   ))
                 ) : (
-                  <InfoRow>暂无代理</InfoRow>
+                  <InfoRow>{dict.agent.noAgents[lang]}</InfoRow>
                 )}
               </AgentList>
             )}

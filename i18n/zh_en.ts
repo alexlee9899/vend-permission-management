@@ -20,6 +20,8 @@ export const dict = {
     edit: { zh: "编辑", en: "Edit" },
     delete: { zh: "删除", en: "Delete" },
     add: { zh: "添加", en: "Add" },
+    search: { zh: "搜索", en: "Search" },
+    searching: { zh: "搜索中...", en: "Searching..." },
   },
   
   // 登录页
@@ -80,4 +82,24 @@ export const dict = {
     serverError: { zh: "服务器错误", en: "Server Error" },
     confirmDelete: { zh: "确认删除？", en: "Confirm deletion?" },
   },
-}; 
+  
+  // 代理页面
+  agent: {
+    title: { zh: "代理业务查询", en: "Agent Business Query" },
+    search: { zh: "代理业务查询", en: "Agent Business Query" },
+    inputEmail: { zh: "输入代理邮箱地址", en: "Enter agent email address" },
+    searching: { zh: "查询中...", en: "Searching..." },
+    enterEmail: { zh: "请输入邮箱地址", en: "Please enter an email address" },
+    searchFailed: { zh: "查询失败", en: "Query failed" },
+    tryAgain: { zh: "请稍后再试", en: "Please try again later" },
+    noResults: { zh: "未找到该代理管理的业务", en: "No businesses found for this agent" },
+    searchResults: { zh: "查询结果", en: "Search Results" },
+    agentList: { zh: "代理列表", en: "Agent List" },
+    loadingAgents: { zh: "加载代理列表中...", en: "Loading agent list..." },
+    noAgents: { zh: "暂无代理", en: "No agents" },
+    deleteSuccess: { zh: "代理删除成功", en: "Agent deleted successfully" },
+    deleteFailed: { zh: "删除代理失败", en: "Failed to delete agent" },
+    cantGetAgents: { zh: "无法获取代理列表", en: "Cannot get agent list" },
+    getAgentsError: { zh: "获取代理列表时出错", en: "Error getting agent list" },
+  },
+};

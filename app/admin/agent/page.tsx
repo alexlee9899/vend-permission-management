@@ -11,6 +11,8 @@ import axios, { AxiosError } from "axios";
 import styled from "styled-components";
 import { colors, radius, shadows } from "@/styles/theme";
 import { Permission } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { dict } from "@/i18n/zh_en";
 
 const SearchSection = styled.div`
   width: 100%;
@@ -134,6 +136,7 @@ interface Business {
 
 const Agent = () => {
   const router = useRouter();
+  const { lang } = useLanguage();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -152,7 +155,7 @@ const Agent = () => {
 
     if (!email.trim()) {
       setMessage({
-        text: "请输入邮箱地址",
+        text: dict.agent.enterEmail[lang],
         type: "error",
       });
       return;
@@ -176,20 +179,20 @@ const Agent = () => {
 
         if (response.data.businesses?.length === 0) {
           setMessage({
-            text: "未找到该代理管理的业务",
+            text: dict.agent.noResults[lang],
             type: "error",
           });
         }
       } else {
         setMessage({
-          text: response.data.message || "查询失败",
+          text: response.data.message || dict.agent.searchFailed[lang],
           type: "error",
         });
       }
     } catch (error: unknown) {
       const axiosError = error as AxiosError<{ message: string }>;
       setMessage({
-        text: axiosError.response?.data?.message || "查询失败，请稍后再试",
+        text: axiosError.response?.data?.message || dict.agent.tryAgain[lang],
         type: "error",
       });
     } finally {
@@ -200,26 +203,26 @@ const Agent = () => {
   return (
     <Container>
       <GlassGrid>
-        <Title>代理业务查询</Title>
+        <Title>{dict.agent.title[lang]}</Title>
 
         <SearchSection>
           {message && <Message type={message.type}>{message.text}</Message>}
           <SearchForm onSubmit={handleSearch}>
             <SearchInput
               type="email"
-              placeholder="输入代理邮箱地址"
+              placeholder={dict.agent.inputEmail[lang]}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <SearchButton type="submit" disabled={isLoading}>
-              {isLoading ? "查询中..." : "查询"}
+              {isLoading ? dict.nav.searching[lang] : dict.nav.search[lang]}
             </SearchButton>
           </SearchForm>
         </SearchSection>
 
         {hasSearched && (
           <>
-            <ResultTitle>查询结果</ResultTitle>
+            <ResultTitle>{dict.agent.searchResults[lang]}</ResultTitle>
             {businesses.length > 0 ? (
               <BusinessGrid>
                 {businesses.map((business) => (
@@ -235,7 +238,7 @@ const Agent = () => {
                 ))}
               </BusinessGrid>
             ) : (
-              <NoResults>未找到该代理管理的业务</NoResults>
+              <NoResults>{dict.agent.noResults[lang]}</NoResults>
             )}
           </>
         )}
