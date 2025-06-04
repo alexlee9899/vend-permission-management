@@ -200,9 +200,11 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
         // 根据用户类型跳转到不同页面
         if (isAdmin) {
+          localStorage.setItem("isAdmin", "true");
           router.push("/admin");
           localStorage.setItem("adminToken", ADMIN_TOKEN);
         } else {
+          localStorage.setItem("isAdmin", "false");
           router.push("/agent");
         }
       } else {

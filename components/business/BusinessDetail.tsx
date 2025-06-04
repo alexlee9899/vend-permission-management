@@ -258,6 +258,83 @@ const PermissionHeader = styled.div`
   margin-bottom: 0.5rem;
 `;
 
+const AgentList = styled.div`
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+`;
+
+const AgentCard = styled.div`
+  background: ${colors.background.glass};
+  padding: 1.5rem;
+  border-radius: ${radius.lg};
+  box-shadow: ${shadows.md};
+  transition: all 0.3s ease;
+  border: 1.5px solid ${colors.border.gradient};
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: ${shadows.lg};
+    border-color: ${colors.primary.light};
+  }
+`;
+
+const AgentInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const AgentName = styled.div`
+  font-weight: 700;
+  color: ${colors.primary.main};
+  font-size: 1.2rem;
+  background: ${colors.primary.gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const AgentEmail = styled.div`
+  color: ${colors.text.secondary};
+  font-size: 1rem;
+`;
+
+const AgentId = styled.div`
+  color: ${colors.text.secondary};
+  font-size: 0.9rem;
+  opacity: 0.7;
+`;
+
+const DeleteButton = styled.button`
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: ${radius.lg};
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: ${colors.danger.main};
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+  box-shadow: ${shadows.sm};
+  &:hover {
+    background: ${colors.danger.dark};
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: ${shadows.md};
+  }
+`;
+
+interface Agent {
+  _id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+}
+
 interface BusinessDetailProps {
   businessId: string;
   isAdmin: boolean;
@@ -284,6 +361,12 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
     text: string;
     type: "success" | "error";
   } | null>(null);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [isLoadingAgents, setIsLoadingAgents] = useState(false);
+  const [agentMessage, setAgentMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -306,6 +389,75 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
     }
   }, [allBusinesses, businessId, isClient]);
 
+  useEffect(() => {
+    if (isClient && businessId) {
+      fetchBusinessAgents();
+    }
+  }, [isClient, businessId]);
+
+  const fetchBusinessAgents = async () => {
+    setIsLoadingAgents(true);
+    try {
+      const response = await axios.post(
+        "https://dev.vend88.com/shop/get_business_agent",
+        {
+          query: { _id: businessId },
+          secret: "VEND88SUPERADMIN2025",
+        }
+      );
+
+      if (response.data.status_code === 200) {
+        setAgents(response.data.agents || []);
+      } else {
+        setAgentMessage({
+          text: "无法获取代理列表",
+          type: "error",
+        });
+      }
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      setAgentMessage({
+        text: axiosError.response?.data?.message || "获取代理列表时出错",
+        type: "error",
+      });
+    } finally {
+      setIsLoadingAgents(false);
+    }
+  };
+
+  const handleDeleteAgent = async (agentId: string) => {
+    try {
+      const response = await axios.post(
+        "https://dev.vend88.com/shop/remove_agent",
+        {
+          secret: "VEND88SUPERADMIN2025",
+          agent_id: agentId,
+          business_id: businessId,
+        }
+      );
+
+      if (response.data.status_code === 200) {
+        setAgentMessage({
+          text: "代理删除成功",
+          type: "success",
+        });
+        // 重新获取代理列表
+        fetchBusinessAgents();
+      } else {
+        setAgentMessage({
+          text: response.data.message || "删除代理失败",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      setAgentMessage({
+        text: axiosError.response?.data?.message || "删除代理失败",
+        type: "error",
+      });
+    }
+  };
+
   const handleEditSuccess = useCallback(() => {
     fetchAllBusinesses();
   }, [fetchAllBusinesses]);
@@ -317,7 +469,7 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
   const handleAddSuccess = useCallback(() => {
     fetchAllBusinesses();
   }, [fetchAllBusinesses]);
-
+  console.log("isAdmin", isAdmin);
   const handleAddAgent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agentEmail) return;
@@ -332,6 +484,8 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
       if (response.data.status_code === 200) {
         setMessage({ text: dict.detail.addSuccess[lang], type: "success" });
         setAgentEmail("");
+        // 重新获取代理列表
+        fetchBusinessAgents();
       } else {
         setMessage({
           text: response.data.message || dict.detail.addFailed[lang],
@@ -370,24 +524,7 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
             <Value>{business.owner_id}</Value>
           </InfoRow>
         </Section>
-        {isAdmin && (
-          <Section>
-            <SectionTitle>{dict.detail.agentManagement[lang]}</SectionTitle>
-            {message && <Message type={message.type}>{message.text}</Message>}
-            <AgentForm onSubmit={handleAddAgent}>
-              <AgentInput
-                type="email"
-                placeholder={dict.detail.agentEmail[lang]}
-                value={agentEmail}
-                onChange={(e) => setAgentEmail(e.target.value)}
-                required
-              />
-              <AgentButton type="submit">
-                {dict.detail.addAgent[lang]}
-              </AgentButton>
-            </AgentForm>
-          </Section>
-        )}
+
         <Section>
           <SectionTitle>{dict.detail.permissionInfo[lang]}</SectionTitle>
           <PermissionList>
@@ -396,20 +533,24 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
                 <PermissionCard key={permission._id}>
                   <PermissionHeader>
                     <PermissionName>{permission.name}</PermissionName>
-                    <div>
-                      <ActionButton
-                        variant="edit"
-                        onClick={() => setEditingPermission(permission)}
-                      >
-                        {dict.nav.edit[lang]}
-                      </ActionButton>
-                      <ActionButton
-                        variant="delete"
-                        onClick={() => setDeletingPermissionId(permission._id)}
-                      >
-                        {dict.nav.delete[lang]}
-                      </ActionButton>
-                    </div>
+                    {isAdmin && (
+                      <div>
+                        <ActionButton
+                          variant="edit"
+                          onClick={() => setEditingPermission(permission)}
+                        >
+                          {dict.nav.edit[lang]}
+                        </ActionButton>
+                        <ActionButton
+                          variant="delete"
+                          onClick={() =>
+                            setDeletingPermissionId(permission._id)
+                          }
+                        >
+                          {dict.nav.delete[lang]}
+                        </ActionButton>
+                      </div>
+                    )}
                   </PermissionHeader>
                   <PermissionDetails>
                     <InfoRow>
@@ -429,10 +570,62 @@ const BusinessDetail: React.FC<BusinessDetailProps> = ({
               </PermissionDetails>
             )}
           </PermissionList>
-          <AddButton onClick={() => setIsAddingPermission(true)}>
-            {dict.detail.addPermission[lang]}
-          </AddButton>
+          {isAdmin && (
+            <AddButton onClick={() => setIsAddingPermission(true)}>
+              {dict.detail.addPermission[lang]}
+            </AddButton>
+          )}
         </Section>
+        {isAdmin && (
+          <Section>
+            <SectionTitle>{dict.detail.agentManagement[lang]}</SectionTitle>
+            {message && <Message type={message.type}>{message.text}</Message>}
+            <AgentForm onSubmit={handleAddAgent}>
+              <AgentInput
+                type="email"
+                placeholder={dict.detail.agentEmail[lang]}
+                value={agentEmail}
+                onChange={(e) => setAgentEmail(e.target.value)}
+                required
+              />
+              <AgentButton type="submit">
+                {dict.detail.addAgent[lang]}
+              </AgentButton>
+            </AgentForm>
+
+            <SectionTitle style={{ marginTop: "2rem" }}>代理列表</SectionTitle>
+            {agentMessage && (
+              <Message type={agentMessage.type}>{agentMessage.text}</Message>
+            )}
+
+            {isLoadingAgents ? (
+              <div className="text-center p-4">加载代理列表中...</div>
+            ) : (
+              <AgentList>
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
+                    <AgentCard key={agent._id}>
+                      <AgentInfo>
+                        <AgentName>
+                          {agent.first_name} {agent.last_name}
+                        </AgentName>
+                        <AgentEmail>{agent.email}</AgentEmail>
+                        <AgentId>ID: {agent._id}</AgentId>
+                      </AgentInfo>
+                      <DeleteButton
+                        onClick={() => handleDeleteAgent(agent._id)}
+                      >
+                        删除
+                      </DeleteButton>
+                    </AgentCard>
+                  ))
+                ) : (
+                  <InfoRow>暂无代理</InfoRow>
+                )}
+              </AgentList>
+            )}
+          </Section>
+        )}
       </Card>
 
       {editingPermission && (

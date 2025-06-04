@@ -48,6 +48,7 @@ export const dict = {
     ownerId: { zh: "所有者ID", en: "Owner ID" },
     permissions: { zh: "权限", en: "Permissions" },
     noPermissions: { zh: "暂无权限信息", en: "No permissions found" },
+    hidePermissions: { zh: "点击查看权限信息", en: "Click to view permissions" },
     permissionLevel: { zh: "权限级别", en: "Permission Level" },
     expireTime: { zh: "过期时间", en: "Expiration Time" },
     status: { zh: "状态", en: "Status" },

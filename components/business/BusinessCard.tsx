@@ -19,6 +19,7 @@ interface BusinessCardProps {
   ownerId: string;
   permissions?: Permission[];
   onClick?: () => void;
+  permissionDisabled?: boolean;
 }
 
 const Card = styled.div`
@@ -185,6 +186,7 @@ export default function BusinessCard({
   ownerId,
   permissions = [],
   onClick,
+  permissionDisabled = false,
 }: BusinessCardProps) {
   const router = useRouter();
   const { lang } = useLanguage();
@@ -239,6 +241,8 @@ export default function BusinessCard({
               </PermissionDetails>
             </PermissionItem>
           ))
+        ) : permissionDisabled ? (
+          <NoPermissions>{dict.business.hidePermissions[lang]}</NoPermissions>
         ) : (
           <NoPermissions>{dict.business.noPermissions[lang]}</NoPermissions>
         )}

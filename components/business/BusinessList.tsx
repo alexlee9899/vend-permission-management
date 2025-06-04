@@ -8,7 +8,7 @@ import { SearchIcon } from "@/components/icons";
 import { useLanguage } from "@/context/LanguageContext";
 import { dict } from "@/i18n/zh_en";
 
-const Container = styled.div`
+export const Container = styled.div`
   min-height: 100vh;
   width: 100vw;
   padding: 2rem 0;
@@ -18,7 +18,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const GlassGrid = styled.div`
+export const GlassGrid = styled.div`
   width: 100%;
   max-width: 1400px;
   background: ${colors.background.glass};
@@ -30,7 +30,7 @@ const GlassGrid = styled.div`
   -webkit-backdrop-filter: blur(12px) saturate(180%);
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
   color: ${colors.primary.main};
   margin-bottom: 2.5rem;
   text-align: center;
@@ -42,7 +42,7 @@ const Title = styled.h1`
   -webkit-text-fill-color: transparent;
 `;
 
-const SearchContainer = styled.div`
+export const SearchContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 3rem;
@@ -50,13 +50,13 @@ const SearchContainer = styled.div`
   width: 100%;
 `;
 
-const SearchWrapper = styled.div`
+export const SearchWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 600px;
 `;
 
-const SearchIconWrapper = styled.div`
+export const SearchIconWrapper = styled.div`
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -65,7 +65,7 @@ const SearchIconWrapper = styled.div`
   pointer-events: none;
 `;
 
-const SearchInput = styled.input`
+export const SearchInput = styled.input`
   padding: 1.1rem 1.5rem 1.1rem 3rem;
   border: 2px solid ${colors.border.light};
   border-radius: ${radius.lg};

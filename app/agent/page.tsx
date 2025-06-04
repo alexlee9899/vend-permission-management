@@ -9,7 +9,7 @@ export default function AgentPage() {
     useAuth();
 
   const handleBusinessClick = (businessId: string) => {
-    router.push(`/admin/${businessId}`);
+    router.push(`/agent/${businessId}`);
   };
 
   return (

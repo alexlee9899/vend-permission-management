@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -47,6 +47,13 @@ export default function Header() {
   const router = useRouter();
   const { setToken, setUserEmail, setAdminToken } = useAuth();
   const { lang, setLang } = useLanguage();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsAdmin(localStorage.getItem("isAdmin") === "true");
+    }
+  }, []);
 
   const handleLogout = () => {
     if (typeof window !== "undefined") {
@@ -54,6 +61,7 @@ export default function Header() {
       localStorage.removeItem("token");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("adminToken");
+      localStorage.removeItem("isAdmin");
 
       // 清除状态
       setToken(null);
@@ -80,6 +88,16 @@ export default function Header() {
           priority
         />
       </Logo>
+      {isAdmin && (
+        <div>
+          <Button onClick={() => router.push("/admin")}>
+            Permission Management
+          </Button>
+          <Button onClick={() => router.push("/admin/agent")}>
+            Agent Management
+          </Button>
+        </div>
+      )}
       <ButtonGroup>
         <select
           value={lang}
